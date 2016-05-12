@@ -27,8 +27,8 @@ namespace Consolephonebook
                 else if (command == CommandType.Add) Add(Command.AddDialog());
                 else if (command == CommandType.Sort) Sort(Command.SortDialog());
                 else if (command == CommandType.Remove) RemoveByIndex();
+                else if (command == CommandType.Edit) Edit();
                 else ShowPersons(this.LastShow);
-
             }
         }
 
@@ -36,11 +36,11 @@ namespace Consolephonebook
         {
             if (person.Name == string.Empty || person.Surname == string.Empty || person.PhoneNumber == string.Empty)
             {
-                ShowMessage("Данные введены не полностью! Операця не выполнена", 1);
+                ShowMessage("Operation failed", 1);
                 return;
             }
             db.Add(person);
-            ShowMessage("Запись успешно добавлена!",0);
+            ShowMessage("Complete!", 0);
         }
 
         private void Search(Person person)
@@ -134,13 +134,25 @@ namespace Consolephonebook
 
         private void RemoveByIndex()
         {
-            int targetIndex = Command.RemoveIndexDialog();
+            int targetIndex = Command.IndexChoseDialog();
             if ( targetIndex== -1) return;
             if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!!",1); return; }
             Person targetPerson = LastShow[targetIndex];
             LastShow.Remove(targetPerson);
             db.Remove(targetPerson);
+            ShowMessage("Complete!!",0);
             ShowPersons(this.LastShow);
+        }
+
+        private void Edit()
+        {
+            int targetIndex = Command.IndexChoseDialog();
+            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!",1);return; }
+            Person targetPerson = this.LastShow[targetIndex];
+            Person personWihtChange = Command.EditDialog(targetPerson);
+            db.Edit(targetPerson,personWihtChange.Name,personWihtChange.Surname,personWihtChange.PhoneNumber);
+            ShowMessage("Complete!!",0);
+            ShowPersons(LastShow);
         }
 
         private void ShowMessage(string message,int status)

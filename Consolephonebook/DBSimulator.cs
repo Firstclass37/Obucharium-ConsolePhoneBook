@@ -48,6 +48,16 @@ namespace Consolephonebook
         {
             return persons.Where(n => n.PhoneNumber == phone);
         }
+        public void Edit(Person targetPerson,string newName,string newSurname,string newPhone)
+        {
+            if (persons.Contains(targetPerson))
+            {
+                Person personForChange = persons.Where(n => n == targetPerson).First();
+                if (newName != string.Empty) personForChange.Name = newName;
+                if (newSurname != string.Empty) personForChange.Surname = newSurname;
+                if (newPhone != string.Empty) personForChange.PhoneNumber = newPhone;
+            }
+        }
 
 
         private void GeneratePersons()
