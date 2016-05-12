@@ -14,6 +14,7 @@ namespace Consolephonebook
         Search,
         Remove,
         Sort,
+        Edit,
 
         Unknown
     }
@@ -30,16 +31,13 @@ namespace Consolephonebook
                 case "search":return CommandType.Search;
                 case "remove":return CommandType.Remove;
                 case "sort":return CommandType.Sort;
-               // case "removebyindex": return CommandType.RemovebyIndex;
-               // case "contains":return CommandType.Contains;
-                //case "searchbyname":return CommandType.SearchByName;
-               // case "searchbysurname":return CommandType.SearchBySurname;
-                //case "searchbyphone":return CommandType.SearchByPhone;
+                case "edit":return CommandType.Edit;
+
                 default: return CommandType.Unknown;
             }
         }
 
-        public static int Show()
+        public static int ShowDialog()
         {
             int result = 10;
             Console.Write("Show first <count>:  ");
@@ -47,7 +45,7 @@ namespace Consolephonebook
             return result; 
         }
 
-        public static Person Search()
+        public static Person SearchDialog()
         {
             Console.Write("Input Name: "); string name = Console.ReadLine();
             Console.WriteLine();
@@ -58,7 +56,7 @@ namespace Consolephonebook
             return new Person(name,surname,phoneNumber);
         }
 
-        public static Person Add()
+        public static Person AddDialog()
         {
             Console.Write("Input Name: "); string name = Console.ReadLine();
             Console.WriteLine();
@@ -69,7 +67,7 @@ namespace Consolephonebook
             return new Person(name, surname, phoneNumber);
         }
 
-        public static int Sort()
+        public static int SortDialog()
         {
             int result = 0;
             Console.WriteLine("Sort By..");
@@ -77,6 +75,15 @@ namespace Consolephonebook
             int.TryParse(Console.ReadKey().KeyChar.ToString(),out result);
             Console.WriteLine();
 
+            return result;
+        }
+
+        public static int RemoveIndexDialog()
+        {
+            int result = -1;
+            Console.Write("Chose index: ");
+            int.TryParse(Console.ReadKey().KeyChar.ToString(),out result);
+            Console.WriteLine();
             return result;
         }
 

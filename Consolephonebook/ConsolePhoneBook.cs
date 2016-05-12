@@ -21,10 +21,11 @@ namespace Consolephonebook
             while ((inputString = Console.ReadLine()) != "-exit")
             {
                 CommandType command = Command.GetCommandType(inputString);
-                if (command == CommandType.Show) ShowPersons(AllPersons,Command.Show());
-                if (command == CommandType.Search) Search(Command.Search());
-                if (command == CommandType.Add) Add(Command.Add());
-                if (command == CommandType.Sort) Sort(Command.Sort());
+                if (command == CommandType.Show) ShowPersons(AllPersons,Command.ShowDialog());
+                if (command == CommandType.Search) Search(Command.SearchDialog());
+                if (command == CommandType.Add) Add(Command.AddDialog());
+                if (command == CommandType.Sort) Sort(Command.SortDialog());
+                if (command == CommandType.Remove) RemoveByIndex();
 
             }
         }
@@ -125,6 +126,17 @@ namespace Consolephonebook
             {
                 ShowPersons(this.LastShow.OrderBy(n => n.PhoneNumber));
             }
+        }
+
+        private void RemoveByIndex()
+        {
+            int targetIndex = Command.RemoveIndexDialog();
+            if ( targetIndex== -1) return;
+            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!!",1); return; }
+            Person targetPerson = LastShow[targetIndex];
+            LastShow.Remove(targetPerson);
+            db.Remove(targetPerson);
+            ShowPersons(this.LastShow);
         }
 
 
