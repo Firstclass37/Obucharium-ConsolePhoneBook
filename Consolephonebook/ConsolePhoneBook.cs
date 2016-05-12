@@ -19,14 +19,15 @@ namespace Consolephonebook
             LastShow = AllPersons;
             ShowPersons(AllPersons);
             string inputString = string.Empty;
-            while ((inputString =Command.InputCommandDialog()) != "-exit")
+            while ((inputString = Command.InputCommandDialog()) != "-exit")
             {
                 CommandType command = Command.GetCommandType(inputString);
-                if (command == CommandType.ShowAll) ShowPersons(AllPersons,Command.ShowDialog());
-                if (command == CommandType.Search) Search(Command.SearchDialog());
-                if (command == CommandType.Add) Add(Command.AddDialog());
-                if (command == CommandType.Sort) Sort(Command.SortDialog());
-                if (command == CommandType.Remove) RemoveByIndex();
+                if (command == CommandType.ShowAll) ShowPersons(AllPersons, Command.ShowDialog());
+                else if (command == CommandType.Search) Search(Command.SearchDialog());
+                else if (command == CommandType.Add) Add(Command.AddDialog());
+                else if (command == CommandType.Sort) Sort(Command.SortDialog());
+                else if (command == CommandType.Remove) RemoveByIndex();
+                else ShowPersons(this.LastShow);
 
             }
         }
@@ -148,6 +149,8 @@ namespace Consolephonebook
             if (status == 1) Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
+            Console.ReadKey();
+            ShowPersons(this.LastShow);
         }
         
     }
