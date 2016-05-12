@@ -144,7 +144,8 @@ namespace Consolephonebook
         {
             int targetIndex = Command.IndexChoseDialog();
             if ( targetIndex== -1) return;
-            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!!",1); return; }
+            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!!",1) ;  return; }
+            if (!Command.ConfirmDialog()) { ShowMessage("Operation aborted",1) ; return; }
             Person targetPerson = LastShow[targetIndex];
             LastShow.Remove(targetPerson);
             db.Remove(targetPerson);
@@ -166,6 +167,7 @@ namespace Consolephonebook
                 ShowMessage("Operation failed! InCorrectness input", 1);
                 return;
             }
+            if (!Command.ConfirmDialog()) { ShowMessage("Operation aborted", 1); return; }
 
             db.Edit(targetPerson,personWihtChange.Name,personWihtChange.Surname,personWihtChange.PhoneNumber);
             ShowMessage("Complete!!",0);
@@ -176,7 +178,8 @@ namespace Consolephonebook
         {
             if (status == 0) Console.ForegroundColor = ConsoleColor.Blue;
             if (status == 1) Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(message);
+            Console.WriteLine();
+            Console.WriteLine("     " + message);
             Console.ResetColor();
             Console.ReadKey();
             ShowPersons(this.LastShow);
