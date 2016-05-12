@@ -40,6 +40,13 @@ namespace Consolephonebook
                 ShowMessage("Operation failed", 1);
                 return;
             }
+            if ( !CheckNameCorrectness(person.Name)||
+                 !CheckSurnameCorrectness(person.Surname)||
+                 !CheckPhoneCorrectness(person.PhoneNumber))
+            {
+                ShowMessage("Operation failed! InCorrectness input", 1);
+                return;
+            }
             db.Add(person);
             ShowMessage("Complete!", 0);
         }
@@ -151,6 +158,15 @@ namespace Consolephonebook
             if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!",1);return; }
             Person targetPerson = this.LastShow[targetIndex];
             Person personWihtChange = Command.EditDialog(targetPerson);
+
+            if (personWihtChange.Name!= string.Empty && !CheckNameCorrectness(personWihtChange.Name)  ||
+                personWihtChange.Surname!= string.Empty && !CheckSurnameCorrectness(personWihtChange.Surname) ||
+                personWihtChange.PhoneNumber!= string.Empty && !CheckPhoneCorrectness(personWihtChange.PhoneNumber))
+            {
+                ShowMessage("Operation failed! InCorrectness input", 1);
+                return;
+            }
+
             db.Edit(targetPerson,personWihtChange.Name,personWihtChange.Surname,personWihtChange.PhoneNumber);
             ShowMessage("Complete!!",0);
             ShowPersons(LastShow);
@@ -175,11 +191,61 @@ namespace Consolephonebook
         search
         add
         remove (only by index)
-        sort 
+        sort
+    
+        Warning!!! max name, surname or phonenumber lenght is 15!!
             ");
+
             ShowMessage("Will be more commands in the future!",0);
         }
-            
-        
+
+        private bool CheckNameCorrectness(string name)
+        {
+            if (name.Length > 15) return false;
+
+            foreach (var c in name)
+            {
+                if (!char.IsLetter(c)) return false;
+                
+            }
+
+            return true;
+        }
+
+        private bool CheckSurnameCorrectness(string surname)
+        {
+            if (surname.Length > 15) return false;
+
+            foreach (var c in surname)
+            {
+                if (c == '-') continue;
+                if (!char.IsLetter(c)) return false;
+
+            }
+
+            return true;
+        }
+
+        private bool CheckPhoneCorrectness(string phone)
+        {
+            if (phone.Length > 15) return false;
+            string temp = string.Copy(phone);
+
+            int indexRightBracket = phone.IndexOf("(");
+            int indexLeftBracket = phone.IndexOf(")");
+            if (indexRightBracket == -1 && indexLeftBracket != -1) return false;
+            if (indexRightBracket != -1 && indexLeftBracket == -1) return false;
+
+            foreach (var c in phone)
+            {
+                if (c == '-') continue;
+                if (c == '+') continue;
+                if (char.IsLetter(c)) return false;
+            }
+            return true;
+        }
+
+
+
     }
 }
