@@ -10,7 +10,7 @@ namespace Consolephonebook
     {
         DBSimulator db = new DBSimulator();
 
-        public List<Person> AllPersons { get; private set; }
+        public List<Person> AllPersons;
         private List<Person> LastShow;
 
         public void Start()
@@ -28,6 +28,7 @@ namespace Consolephonebook
                 else if (command == CommandType.Sort) Sort(Command.SortDialog());
                 else if (command == CommandType.Remove) RemoveByIndex();
                 else if (command == CommandType.Edit) Edit();
+                else if (command == CommandType.Help) ShowHelp();
                 else ShowPersons(this.LastShow);
             }
         }
@@ -164,6 +165,21 @@ namespace Consolephonebook
             Console.ReadKey();
             ShowPersons(this.LastShow);
         }
+
+        private void ShowHelp()
+        {
+            Console.WriteLine(@"Command List:
+        
+        showall
+        edit
+        search
+        add
+        remove (only by index)
+        sort 
+            ");
+            ShowMessage("Will be more commands in the future!",0);
+        }
+            
         
     }
 }
