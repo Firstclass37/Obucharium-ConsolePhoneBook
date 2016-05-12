@@ -10,6 +10,8 @@ namespace Consolephonebook
     {
         static void Main(string[] args)
         {
+            ConsolePhoneBook app = new ConsolePhoneBook();
+            app.Start();
         }
     }
 }
