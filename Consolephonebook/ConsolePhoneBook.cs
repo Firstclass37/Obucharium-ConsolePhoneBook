@@ -11,20 +11,34 @@ namespace Consolephonebook
         DBSimulator db = new DBSimulator();
 
         public List<Person> AllPersons { get; private set; }
+        private List<Person> LastShow;
 
         public void Start()
         {
             AllPersons = db.GetAll();
+            LastShow = AllPersons;
             string inputString = string.Empty;
             while ((inputString = Console.ReadLine()) != "-exit")
             {
                 CommandType command = Command.GetCommandType(inputString);
                 if (command == CommandType.Show) ShowPersons(AllPersons,Command.Show());
                 if (command == CommandType.Search) Search(Command.Search());
+                if (command == CommandType.Add) Add(Command.Add());
+                if (command == CommandType.Sort) Sort(Command.Sort());
 
             }
         }
 
+        private void Add(Person person)
+        {
+            if (person.Name == string.Empty || person.Surname == string.Empty || person.PhoneNumber == string.Empty)
+            {
+                ShowMessage("Данные введены не полностью! Операця не выполнена", 1);
+                return;
+            }
+            db.Add(person);
+            ShowMessage("Запись успешно добавлена!",0);
+        }
 
         private void Search(Person person)
         {
@@ -74,23 +88,52 @@ namespace Consolephonebook
 
         private void ShowPersons(IEnumerable<Person> inputPerson,int count=10)
         {
-            //Ширина колонки в таблице 20
+            LastShow = inputPerson.ToList(); ;
+
             Console.WriteLine(new String('-',71));
             Console.WriteLine("|   №  |        Name        |       Surname      |        Phone       |");
             Console.WriteLine(new String('=', 71));
-            
-                foreach (Person p in inputPerson)
-                {
-                    if (--count < 0) break;
-                    string number = "|" + new string(' ', (6 - AllPersons.IndexOf(p).ToString().Length) / 2) + AllPersons.IndexOf(p).ToString() + new string(' ', 6 - AllPersons.IndexOf(p).ToString().Length - (6 - AllPersons.IndexOf(p).ToString().Length) / 2);
+
+            int i = 0;
+            foreach (Person p in inputPerson)
+                {     
+                    if (i > count-1) break;
+                    string number = "|" + new string(' ', (6 - i.ToString().Length) / 2) + i.ToString() + new string(' ', 6 - i.ToString().Length - (6 - i.ToString().Length) / 2);
                     string name = "|" + new string(' ', (20 - p.Name.Length) / 2) + p.Name + new string(' ', 20 - p.Name.Length - (20 - p.Name.Length) / 2);
                     string surname = "|" + new string(' ', (20 - p.Surname.Length) / 2) + p.Surname + new string(' ', 20 - p.Surname.Length - (20 - p.Surname.Length) / 2);
                     string phone = "|" + new string(' ', (20 - p.PhoneNumber.Length) / 2) + p.PhoneNumber + new string(' ', 20 - p.PhoneNumber.Length - (20 - p.PhoneNumber.Length) / 2);
                     string result = number + name + surname + phone + "|";
                     Console.WriteLine(result);
                     Console.WriteLine(new String('-', 71));
+                    i++;
                 }
             
+        }
+
+        private void Sort(int type)
+        {
+            if (type == 0) { ShowMessage("Не выбран параметр сортировки! Операция не выполнена", 1); return; }
+            else if (type == 1)
+            {
+                ShowPersons(this.LastShow.OrderBy(n => n.Name));
+            }
+            else if (type == 2)
+            {    
+                ShowPersons(this.LastShow.OrderBy(n => n.Surname));
+            }
+            else if (type == 3)
+            {
+                ShowPersons(this.LastShow.OrderBy(n => n.PhoneNumber));
+            }
+        }
+
+
+        private void ShowMessage(string message,int status)
+        {
+            if (status == 0) Console.ForegroundColor = ConsoleColor.Blue;
+            if (status == 1) Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
 
     }

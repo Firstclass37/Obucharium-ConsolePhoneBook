@@ -13,11 +13,7 @@ namespace Consolephonebook
         Add,
         Search,
         Remove,
-        RemovebyIndex,
-        Contains,
-        SearchByName,
-        SearchBySurname,
-        SearchByPhone,
+        Sort,
 
         Unknown
     }
@@ -33,11 +29,12 @@ namespace Consolephonebook
                 case "add":return CommandType.Add;
                 case "search":return CommandType.Search;
                 case "remove":return CommandType.Remove;
-                case "removebyindex": return CommandType.RemovebyIndex;
-                case "contains":return CommandType.Contains;
-                case "searchbyname":return CommandType.SearchByName;
-                case "searchbysurname":return CommandType.SearchBySurname;
-                case "searchbyphone":return CommandType.SearchByPhone;
+                case "sort":return CommandType.Sort;
+               // case "removebyindex": return CommandType.RemovebyIndex;
+               // case "contains":return CommandType.Contains;
+                //case "searchbyname":return CommandType.SearchByName;
+               // case "searchbysurname":return CommandType.SearchBySurname;
+                //case "searchbyphone":return CommandType.SearchByPhone;
                 default: return CommandType.Unknown;
             }
         }
@@ -49,6 +46,7 @@ namespace Consolephonebook
             int.TryParse(Console.ReadLine(), out result);
             return result; 
         }
+
         public static Person Search()
         {
             Console.Write("Input Name: "); string name = Console.ReadLine();
@@ -58,6 +56,28 @@ namespace Consolephonebook
             Console.Write("Input PhoneNumber: "); string phoneNumber = Console.ReadLine();
             Console.WriteLine();
             return new Person(name,surname,phoneNumber);
+        }
+
+        public static Person Add()
+        {
+            Console.Write("Input Name: "); string name = Console.ReadLine();
+            Console.WriteLine();
+            Console.Write("Input Surname: "); string surname = Console.ReadLine();
+            Console.WriteLine();
+            Console.Write("Input PhoneNumber: "); string phoneNumber = Console.ReadLine();
+            Console.WriteLine();
+            return new Person(name, surname, phoneNumber);
+        }
+
+        public static int Sort()
+        {
+            int result = 0;
+            Console.WriteLine("Sort By..");
+            Console.Write("Chose 1-by name , 2 - by surname , 3 - by phonenumber :");       
+            int.TryParse(Console.ReadKey().KeyChar.ToString(),out result);
+            Console.WriteLine();
+
+            return result;
         }
 
     }
