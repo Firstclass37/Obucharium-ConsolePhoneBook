@@ -8,7 +8,7 @@ namespace Consolephonebook
 {
     public enum CommandType
     {
-        Show,
+        ShowAll,
         Help,
         Add,
         Search,
@@ -25,7 +25,7 @@ namespace Consolephonebook
         {
             switch (inputString.ToLower())
             {
-                case "show":return CommandType.Show;
+                case "showall":return CommandType.ShowAll;
                 case "help":return CommandType.Help;
                 case "add":return CommandType.Add;
                 case "search":return CommandType.Search;
@@ -36,6 +36,15 @@ namespace Consolephonebook
                 default: return CommandType.Unknown;
             }
         }
+
+        public static string InputCommandDialog()
+        {
+            string result = string.Empty;
+            Console.Write("Input a command: ");
+            result = Console.ReadLine();
+            Console.WriteLine();
+            return result;
+        } 
 
         public static int ShowDialog()
         {
@@ -82,7 +91,7 @@ namespace Consolephonebook
         {
             int result = -1;
             Console.Write("Chose index: ");
-            int.TryParse(Console.ReadKey().KeyChar.ToString(),out result);
+            int.TryParse(Console.ReadLine(),out result);
             Console.WriteLine();
             return result;
         }

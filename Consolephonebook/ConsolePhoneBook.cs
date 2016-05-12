@@ -17,11 +17,12 @@ namespace Consolephonebook
         {
             AllPersons = db.GetAll();
             LastShow = AllPersons;
+            ShowPersons(AllPersons);
             string inputString = string.Empty;
-            while ((inputString = Console.ReadLine()) != "-exit")
+            while ((inputString =Command.InputCommandDialog()) != "-exit")
             {
                 CommandType command = Command.GetCommandType(inputString);
-                if (command == CommandType.Show) ShowPersons(AllPersons,Command.ShowDialog());
+                if (command == CommandType.ShowAll) ShowPersons(AllPersons,Command.ShowDialog());
                 if (command == CommandType.Search) Search(Command.SearchDialog());
                 if (command == CommandType.Add) Add(Command.AddDialog());
                 if (command == CommandType.Sort) Sort(Command.SortDialog());
@@ -90,7 +91,7 @@ namespace Consolephonebook
         private void ShowPersons(IEnumerable<Person> inputPerson,int count=10)
         {
             LastShow = inputPerson.ToList(); ;
-
+            Console.Clear();
             Console.WriteLine(new String('-',71));
             Console.WriteLine("|   №  |        Name        |       Surname      |        Phone       |");
             Console.WriteLine(new String('=', 71));
@@ -105,10 +106,12 @@ namespace Consolephonebook
                     string phone = "|" + new string(' ', (20 - p.PhoneNumber.Length) / 2) + p.PhoneNumber + new string(' ', 20 - p.PhoneNumber.Length - (20 - p.PhoneNumber.Length) / 2);
                     string result = number + name + surname + phone + "|";
                     Console.WriteLine(result);
-                    Console.WriteLine(new String('-', 71));
-                    i++;
+                    Console.WriteLine(new String('-', 71));                
+                i++;
                 }
-            
+            Console.WriteLine("Current total person count: {0}",this.LastShow.Count);
+            Console.WriteLine(new String('-', 71));
+
         }
 
         private void Sort(int type)
@@ -139,7 +142,6 @@ namespace Consolephonebook
             ShowPersons(this.LastShow);
         }
 
-
         private void ShowMessage(string message,int status)
         {
             if (status == 0) Console.ForegroundColor = ConsoleColor.Blue;
@@ -147,6 +149,6 @@ namespace Consolephonebook
             Console.WriteLine(message);
             Console.ResetColor();
         }
-
+        
     }
 }
