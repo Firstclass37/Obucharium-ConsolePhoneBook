@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandType.cs" />
     <Compile Include="ConsolePhoneBook.cs" />
     <Compile Include="DBSimulator.cs" />
     <Compile Include="Command.cs" />

@@ -18,7 +18,7 @@ namespace Consolephonebook
 
         public List<Person> GetAll()
         {
-            return persons;
+            return persons.ToList();
         }
         public void Add(Person person)
         {

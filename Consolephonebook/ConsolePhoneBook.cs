@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolephonebook
 {
-    class ConsolePhoneBook
+    public class ConsolePhoneBook
     {
         DBSimulator db = new DBSimulator();
 
@@ -22,14 +22,34 @@ namespace Consolephonebook
             while ((inputString = Command.InputCommandDialog()) != "-exit")
             {
                 CommandType command = Command.GetCommandType(inputString);
-                if (command == CommandType.ShowAll) ShowPersons(AllPersons, Command.ShowDialog());
-                else if (command == CommandType.Search) Search(Command.SearchDialog());
-                else if (command == CommandType.Add) Add(Command.AddDialog());
-                else if (command == CommandType.Sort) Sort(Command.SortDialog());
-                else if (command == CommandType.Remove) RemoveByIndex();
-                else if (command == CommandType.Edit) Edit();
-                else if (command == CommandType.Help) ShowHelp();
-                else ShowPersons(this.LastShow);
+                switch (command)
+                {
+                    case CommandType.ShowAll:
+                        ShowPersons(AllPersons, Command.ShowDialog());
+                        break;
+                    case CommandType.Search:
+                        Search(Command.SearchDialog());
+                        break;
+                    case CommandType.Add:
+                        Add(Command.AddDialog());
+                        break;
+                    case CommandType.Sort:
+                        Sort(Command.SortDialog());
+                        break;
+                    case CommandType.Remove:
+                        RemoveByIndex();
+                        break;
+                    case CommandType.Edit:
+                        Edit();
+                        break;
+                    case CommandType.Help:
+                        ShowHelp();
+                        break;
+                    default:
+                        ShowPersons(this.LastShow);
+                        break;
+                }
+                
             }
         }
 
@@ -48,6 +68,7 @@ namespace Consolephonebook
                 return;
             }
             db.Add(person);
+            AllPersons = db.GetAll();
             ShowMessage("Complete!", 0);
         }
 
@@ -97,7 +118,7 @@ namespace Consolephonebook
             }
         }
 
-        private void ShowPersons(IEnumerable<Person> inputPerson,int count=10)
+        private void ShowPersons(IEnumerable<Person> inputPerson,int count = 15)
         {
             LastShow = inputPerson.ToList(); ;
             Console.Clear();
@@ -149,6 +170,7 @@ namespace Consolephonebook
             Person targetPerson = LastShow[targetIndex];
             LastShow.Remove(targetPerson);
             db.Remove(targetPerson);
+            AllPersons = db.GetAll();
             ShowMessage("Complete!!",0);
             ShowPersons(this.LastShow);
         }
@@ -170,6 +192,7 @@ namespace Consolephonebook
             if (!Command.ConfirmDialog()) { ShowMessage("Operation aborted", 1); return; }
 
             db.Edit(targetPerson,personWihtChange.Name,personWihtChange.Surname,personWihtChange.PhoneNumber);
+            AllPersons = db.GetAll();
             ShowMessage("Complete!!",0);
             ShowPersons(LastShow);
         }

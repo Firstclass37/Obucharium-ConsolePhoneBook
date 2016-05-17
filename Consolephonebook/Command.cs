@@ -6,18 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolephonebook
 {
-    public enum CommandType
-    {
-        ShowAll,
-        Help,
-        Add,
-        Search,
-        Remove,
-        Sort,
-        Edit,
-
-        Unknown
-    }
+    
 
     public static class Command
     {
