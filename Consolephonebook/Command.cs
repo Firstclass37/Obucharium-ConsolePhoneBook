@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Repository;
 
 namespace Consolephonebook
 {
@@ -37,7 +38,7 @@ namespace Consolephonebook
 
         public static int ShowDialog()
         {
-            int result = 10;
+            int result = 15;
             Console.Write("     Enter count:  ");
             int.TryParse(Console.ReadLine().Trim(), out result);
             return result; 
@@ -51,7 +52,7 @@ namespace Consolephonebook
             Console.WriteLine();
             Console.Write("     Input PhoneNumber: "); string phoneNumber = Console.ReadLine().Trim();
             Console.WriteLine();
-            return new Person(name,surname,phoneNumber);
+            return new Person() {Name = name, Surname = surname,PhoneNumber = phoneNumber};
         }
 
         public static Person AddDialog()
@@ -62,7 +63,7 @@ namespace Consolephonebook
             Console.WriteLine();
             Console.Write("     Input PhoneNumber: "); string phoneNumber = Console.ReadLine().Trim();
             Console.WriteLine();
-            return new Person(name, surname, phoneNumber);
+            return new Person() { Name = name, Surname = surname, PhoneNumber = phoneNumber };
         }
 
         public static int SortDialog()
@@ -85,18 +86,21 @@ namespace Consolephonebook
             return result;
         }
 
-        public static Person EditDialog(Person targetPerson)
+        public static void EditDialog(Person targetPerson)
         {
             Console.Write("     Current Name: {0}. New Name:",targetPerson.Name);
             string name = Console.ReadLine().Trim();
+            if (name != string.Empty) targetPerson.Name = name;
             Console.WriteLine();
             Console.Write("     Current Surname: {0}. New Surname:", targetPerson.Surname);
             string surname = Console.ReadLine().Trim();
+            if (surname != string.Empty) targetPerson.Surname = surname;
             Console.WriteLine();
             Console.Write("     Current Phone: {0}. New Phone:", targetPerson.PhoneNumber);
             string phone = Console.ReadLine().Trim();
+            if (phone != string.Empty) targetPerson.PhoneNumber = phone;
             Console.WriteLine();
-            return new Person(name,surname,phone);
+            
         }
 
         public static bool ConfirmDialog()

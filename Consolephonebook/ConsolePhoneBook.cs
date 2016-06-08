@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Repository;
 
 namespace Consolephonebook
 {
     public class ConsolePhoneBook
     {
-        DBSimulator db = new DBSimulator();
+        private Repository.Repository repository = new Repository.Repository();
 
         public List<Person> AllPersons;
         private List<Person> LastShow;
 
         public void Start()
         {
-            AllPersons = db.GetAll();
+            AllPersons = repository.People.ToList();
             LastShow = AllPersons;
             ShowPersons(AllPersons);
-            string inputString = string.Empty;
-            while ((inputString = Command.InputCommandDialog()) != "-exit")
+            string commandString = string.Empty;
+            while ((commandString = Command.InputCommandDialog()) != "-exit")
             {
-                CommandType command = Command.GetCommandType(inputString);
+                CommandType command = Command.GetCommandType(commandString);
                 switch (command)
                 {
                     case CommandType.ShowAll:
@@ -67,55 +68,19 @@ namespace Consolephonebook
                 ShowMessage("Operation failed! InCorrectness input", 1);
                 return;
             }
-            db.Add(person);
-            AllPersons = db.GetAll();
+            repository.SavePerson(person);
+            AllPersons = repository.People.ToList();
+            ShowPersons(AllPersons);
             ShowMessage("Complete!", 0);
         }
 
         private void Search(Person person)
         {
-            if (person.Name != String.Empty && person.Surname != String.Empty && person.PhoneNumber != String.Empty)
-            {
-                if (db.Contains(person))
-                {
-                    List<Person> result = new List<Person>();
-                    result.Add(person);
-                    ShowPersons(result);
-                }
-            }
-            else if (person.Name != String.Empty && person.Surname != String.Empty && person.PhoneNumber == String.Empty)
-            {
-                IEnumerable<Person> nameResult = db.SearchByName(person.Name);
-                IEnumerable<Person> surnameResult = db.SearchBySurname(person.Surname);
-                IEnumerable<Person> result = nameResult.Where(n => surnameResult.Where(s => s.Name == n.Name).Contains(n));
-                ShowPersons(result);
-            }
-            else if (person.Name != String.Empty && person.Surname == String.Empty && person.PhoneNumber != String.Empty)
-            {
-                IEnumerable<Person> nameResult = db.SearchByName(person.Name);
-                IEnumerable<Person> phoneResult = db.SearchByPhone(person.PhoneNumber);
-                IEnumerable<Person> result = nameResult.Where(n => phoneResult.Where(s => s.Name == n.Name).Contains(n));
-                ShowPersons(result);
-            }
-            else if (person.Name == String.Empty && person.Surname != String.Empty && person.PhoneNumber != String.Empty)
-            {
-                IEnumerable<Person> surnameResult = db.SearchBySurname(person.Surname);
-                IEnumerable<Person> phoneResult = db.SearchByPhone(person.PhoneNumber);
-                IEnumerable<Person> result = surnameResult.Where(n => phoneResult.Where(s => s.Surname == n.Surname).Contains(n));
-                ShowPersons(result);
-            }
-            else if (person.Name != String.Empty && person.Surname == String.Empty && person.PhoneNumber == String.Empty)
-            {
-                ShowPersons(db.SearchByName(person.Name));
-            }
-            else if (person.Name == String.Empty && person.Surname != String.Empty && person.PhoneNumber == String.Empty)
-            {
-                ShowPersons(db.SearchBySurname(person.Surname));
-            }
-            else if (person.Name == String.Empty && person.Surname == String.Empty && person.PhoneNumber != String.Empty)
-            {
-                ShowPersons(db.SearchByPhone(person.PhoneNumber));
-            }
+            var nameResult = person.Name == string.Empty ? AllPersons : AllPersons.Where(p=>p.Name.Equals(person.Name));
+            var surnameResult = person.Surname == string.Empty ? AllPersons : AllPersons.Where(p=>p.Surname.Equals(person.Surname));
+            var phoneresult = person.PhoneNumber == string.Empty ? AllPersons : AllPersons.Where(p=>p.PhoneNumber.Equals(person.PhoneNumber));
+            var result = nameResult.Intersect(surnameResult.Intersect(phoneresult));
+            ShowPersons(result);
         }
 
         private void ShowPersons(IEnumerable<Person> inputPerson,int count = 15)
@@ -146,7 +111,11 @@ namespace Consolephonebook
 
         private void Sort(int type)
         {
-            if (type == 0) { ShowMessage("Не выбран параметр сортировки! Операция не выполнена", 1); return; }
+            if (type == 0)
+            {
+                ShowMessage("Не выбран параметр сортировки! Операция не выполнена", 1);
+                return;
+            }
             else if (type == 1)
             {
                 ShowPersons(this.LastShow.OrderBy(n => n.Name));
@@ -164,13 +133,21 @@ namespace Consolephonebook
         private void RemoveByIndex()
         {
             int targetIndex = Command.IndexChoseDialog();
-            if ( targetIndex== -1) return;
-            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!!",1) ;  return; }
-            if (!Command.ConfirmDialog()) { ShowMessage("Operation aborted",1) ; return; }
+            if ( targetIndex == -1) return;
+            if (targetIndex > this.LastShow.Count - 1)
+            {
+                ShowMessage("Index out from range!!",1);
+                return;
+            }
+            if (!Command.ConfirmDialog())
+            {
+                ShowMessage("Operation aborted",1);
+                return;
+            }
             Person targetPerson = LastShow[targetIndex];
             LastShow.Remove(targetPerson);
-            db.Remove(targetPerson);
-            AllPersons = db.GetAll();
+            repository.RemovePerson(targetPerson);
+            AllPersons = repository.People.ToList();
             ShowMessage("Complete!!",0);
             ShowPersons(this.LastShow);
         }
@@ -178,21 +155,29 @@ namespace Consolephonebook
         private void Edit()
         {
             int targetIndex = Command.IndexChoseDialog();
-            if (targetIndex > this.LastShow.Count - 1) { ShowMessage("Index out from range!",1);return; }
+            if (targetIndex > this.LastShow.Count - 1)
+            {
+                ShowMessage("Index out from range!",1);
+                return;
+            }
             Person targetPerson = this.LastShow[targetIndex];
-            Person personWihtChange = Command.EditDialog(targetPerson);
+            Command.EditDialog(targetPerson);
 
-            if (personWihtChange.Name!= string.Empty && !CheckNameCorrectness(personWihtChange.Name)  ||
-                personWihtChange.Surname!= string.Empty && !CheckSurnameCorrectness(personWihtChange.Surname) ||
-                personWihtChange.PhoneNumber!= string.Empty && !CheckPhoneCorrectness(personWihtChange.PhoneNumber))
+            if (!CheckNameCorrectness(targetPerson.Name)  ||
+                !CheckSurnameCorrectness(targetPerson.Surname) ||
+                !CheckPhoneCorrectness(targetPerson.PhoneNumber))
             {
                 ShowMessage("Operation failed! InCorrectness input", 1);
                 return;
             }
-            if (!Command.ConfirmDialog()) { ShowMessage("Operation aborted", 1); return; }
+            if (!Command.ConfirmDialog())
+            {
+                ShowMessage("Operation aborted", 1);
+                return;
+            }
 
-            db.Edit(targetPerson,personWihtChange.Name,personWihtChange.Surname,personWihtChange.PhoneNumber);
-            AllPersons = db.GetAll();
+            repository.SavePerson(targetPerson);
+            AllPersons = repository.People.ToList();
             ShowMessage("Complete!!",0);
             ShowPersons(LastShow);
         }
